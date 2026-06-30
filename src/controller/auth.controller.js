@@ -1,6 +1,8 @@
 const userModel = require('../models/user.model')
+const blackListModel = require('../models/blacklist.model')
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
+const redis = require('../config/caches')
 
 async function registerUser(req,res){
     const { username , email, password } = req.body
@@ -52,7 +54,7 @@ async function loginUser(req,res){
             {email},
             {username}
         ]
-    })
+    }).select('+password')
 
     if(!user){
         return res.status(400).json({
@@ -91,7 +93,36 @@ async function loginUser(req,res){
     })
 }
 
+async function getMe(req,res) {
+    const user = await userModel.findById(req.user.id)
+
+    res.status(200).json({
+        message: 'user fetch successfully',
+        user
+    })
+}
+
+async function logoutUser(req,res) {
+    const token = req.cookies.token
+
+    res.clearCookie('token')
+
+    await redis.set(token, Date.now().toString(),"EX",60*60)  // expire hoga token 60*60 sec me means 1hour me hat jayega
+    // isme hamne data key value k pair me send kiya h token h key or date h value
+    // kyu ki data string ki form me save hota h to toString me change kr diya
+
+    // await blackListModel.create({
+    //     token
+    // })
+
+    res.status(201).json({
+        message:'logout successfully'
+    })
+}
+
 module.exports = { 
     registerUser,
-    loginUser
+    loginUser,
+    getMe,
+    logoutUser
 }
