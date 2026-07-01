@@ -7,6 +7,10 @@ const redis = require('../config/caches')
 async function registerUser(req,res){
     const { username , email, password } = req.body
 
+    console.log(req.body);
+    console.log(typeof req.body.username);
+    console.log(req.body.username);
+
     const isAlreadyExist = await userModel.findOne({
         $or:[
             {email},
