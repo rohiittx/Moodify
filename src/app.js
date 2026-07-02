@@ -16,7 +16,9 @@ app.use(cookieParser())
  * Routes
  */
 const authRoutes = require('./routes/auth.routes')
+const songRoutes = require('./routes/song.router')
 
 app.use('/api/auth', authRoutes)
+app.use('/api/song', songRoutes)
 
 module.exports = app

@@ -6,7 +6,7 @@ const redis = new Redis({
     password: process.env.REDIS_PASSWORD
 })
 
-redis.on("connect", ()=>{
+redis.on("connect", ()=>{  // ye ek mmiddleware h redis ka
     console.log("server is connected to redis")
 })
 
